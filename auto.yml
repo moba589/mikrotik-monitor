@@ -1,0 +1,13 @@
+name: 10 Minute Cron
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # Har 10 minute baad chalega
+  workflow_dispatch:        # Button se manually chalane ke liye
+
+jobs:
+  ping_site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit the URL
+        run: curl -I http://cjinternet.free.nf/monitor.php
