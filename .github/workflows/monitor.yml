@@ -106,7 +106,7 @@ jobs:
           server_address: smtp.gmail.com
           server_port: 587
           username: ${{ moba@cloudjunction.cloud }}
-          password: ${{ eneg aqmh okvo qdie }}
+          password: ${{ enegaqmhokvoqdie }}
           subject: "🔴 MikroTik Alert — Router Down! (${{ steps.check.outputs.check_time }})"
           to: ${{ adminpk@cloudjunction.cloud }}
           from: "MikroTik Monitor <${{ secrets.GMAIL_USER }}>"
