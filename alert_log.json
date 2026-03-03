@@ -17,16 +17,3 @@
     "down_hosts": []
   }
 }
-```
-
-### Step 3 — Commit karo
-
-**Commit changes** → Done
-
----
-
-### Verify karo
-
-Browser mein kholo:
-```
-https://raw.githubusercontent.com/USERNAME/mikrotik-monitor/main/alert_log.json
