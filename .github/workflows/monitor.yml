@@ -143,9 +143,9 @@ jobs:
           print("Email sent OK")
           PYEOF
         env:
-          GMAIL_USER:   ${{ moba@cloudjunction.cloud }}
-          GMAIL_PASS:   ${{ enegaqmhokvoqdie }}
-          ALERT_EMAIL:  ${{ adminpk@cloudjunction.cloud }}
-          R1_DOWN:      ${{ env.R1_DOWN }}
-          R2_DOWN:      ${{ env.R2_DOWN }}
-          CHECK_TIME:   ${{ env.CHECK_TIME }}
+          GMAIL_USER:   "${{ moba@cloudjunction.cloud }}"
+          GMAIL_PASS:   "${{ enegaqmhokvoqdie }}"
+          ALERT_EMAIL:  "${{ adminpk@cloudjunction.cloud }}"
+          R1_DOWN:      "${{ env.R1_DOWN }}"
+          R2_DOWN:      "${{ env.R2_DOWN }}"
+          CHECK_TIME:   "${{ env.CHECK_TIME }}"
