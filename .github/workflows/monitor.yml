@@ -1,0 +1,126 @@
+name: MikroTik Monitor
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check All Routers
+        id: check
+        run: |
+          check_host() {
+            local IP=$1 PORT=$2 LABEL=$3
+            START=$(date +%s%3N)
+            HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+              --connect-timeout 5 --max-time 8 -k \
+              "https://$IP:$PORT/" 2>/dev/null || echo "0")
+            END=$(date +%s%3N)
+            MS=$((END - START))
+            if [ "$HTTP" != "0" ] && [ "$HTTP" != "000" ]; then
+              echo "✅ UP   $LABEL ($IP:$PORT) ${MS}ms HTTP:$HTTP"
+              echo "up"
+            else
+              echo "❌ DOWN $LABEL ($IP:$PORT) ${MS}ms"
+              echo "down"
+            fi
+          }
+
+          TIME=$(date '+%d-%b-%Y %H:%M:%S')
+          echo "=== MikroTik Monitor === $TIME"
+          echo ""
+
+          # Router 1
+          echo "--- Router 1: Main Office ---"
+          R1_S=$(check_host "115.42.66.83"    "80" "Spotcomm")
+          R1_M=$(check_host "125.209.101.214" "80" "Multinet")
+
+          # Router 2
+          echo "--- Router 2: Branch ---"
+          R2_I=$(check_host "113.203.193.201" "80" "Optome")
+          R2_O=$(check_host "113.203.193.201" "80" "Optome")
+
+          # Determine overall status
+          R1_DOWN="false"
+          R2_DOWN="false"
+
+          echo "$R1_S" | grep -q "down" && echo "$R1_M" | grep -q "down" && R1_DOWN="true"
+          echo "$R2_I" | grep -q "down" && R2_DOWN="true"
+
+          echo "r1_down=$R1_DOWN"   >> $GITHUB_OUTPUT
+          echo "r2_down=$R2_DOWN"   >> $GITHUB_OUTPUT
+          echo "check_time=$TIME"   >> $GITHUB_OUTPUT
+
+          # Build JSON for dashboard
+          R1_S_STATUS=$(echo "$R1_S" | grep -q "down" && echo "false" || echo "true")
+          R1_M_STATUS=$(echo "$R1_M" | grep -q "down" && echo "false" || echo "true")
+          R2_I_STATUS=$(echo "$R2_I" | grep -q "down" && echo "false" || echo "true")
+
+          cat > alert_log.json << JSON
+          {
+            "updated_at": "$TIME",
+            "r1_down": $R1_DOWN,
+            "r1_status": {
+              "name": "Router 1 — Main Office",
+              "all_down": $R1_DOWN,
+              "checked_at": "$TIME",
+              "up_hosts":   $([ "$R1_S_STATUS" = "true"  ] && echo '[{"label":"Spotcomm","ip":"115.42.66.83"}]'   || echo '[]'),
+              "down_hosts": $([ "$R1_S_STATUS" = "false" ] && echo '[{"label":"Spotcomm","ip":"115.42.66.83","error":"Unreachable"}]' || echo '[]')
+            },
+            "r2_down": $R2_DOWN,
+            "r2_status": {
+              "name": "Router 2 — Branch",
+              "all_down": $R2_DOWN,
+              "checked_at": "$TIME",
+              "up_hosts":   $([ "$R2_I_STATUS" = "true"  ] && echo '[{"label":"ISP1","ip":"BRANCH_IP"}]' || echo '[]'),
+              "down_hosts": $([ "$R2_I_STATUS" = "false" ] && echo '[{"label":"ISP1","ip":"BRANCH_IP","error":"Unreachable"}]' || echo '[]')
+            }
+          }
+          JSON
+
+          echo "JSON written:"
+          cat alert_log.json
+
+      - name: Commit alert_log.json
+        run: |
+          git config user.name  "MikroTik Monitor"
+          git config user.email "monitor@github.com"
+          git add alert_log.json
+          git diff --staged --quiet || git commit -m "Monitor update $(date '+%H:%M:%S')"
+          git push
+
+      - name: Send Down Alert Email
+        if: steps.check.outputs.r1_down == 'true' || steps.check.outputs.r2_down == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ moba@cloudjunction.cloud }}
+          password: ${{ eneg aqmh okvo qdie }}
+          subject: "🔴 MikroTik Alert — Router Down! (${{ steps.check.outputs.check_time }})"
+          to: ${{ adminpk@cloudjunction.cloud }}
+          from: "MikroTik Monitor <${{ secrets.GMAIL_USER }}>"
+          html_body: |
+            <div style="font-family:Arial,sans-serif;max-width:500px;margin:auto">
+              <div style="background:#ef4444;color:white;padding:20px;border-radius:10px 10px 0 0">
+                <h2 style="margin:0">🔴 Router Down Alert</h2>
+                <p style="margin:5px 0 0;opacity:.85">${{ steps.check.outputs.check_time }}</p>
+              </div>
+              <div style="background:#fff;border:1px solid #fee2e2;padding:20px;border-radius:0 0 10px 10px">
+                <p><strong>Router 1:</strong> ${{ steps.check.outputs.r1_down == 'true' && '❌ OFFLINE' || '✅ ONLINE' }}</p>
+                <p><strong>Router 2:</strong> ${{ steps.check.outputs.r2_down == 'true' && '❌ OFFLINE' || '✅ ONLINE' }}</p>
+                <hr>
+                <p>⚡ Check router power and ISP connections immediately.</p>
+                <a href="https://cjinternet.free.nf/" style="background:#3b82f6;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px">Open Dashboard</a>
+              </div>
+            </div>
