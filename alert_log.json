@@ -1,1 +1,32 @@
+{
+  "updated_at": "—",
+  "r1_down": false,
+  "r1_status": {
+    "name": "Router 1 — Main Office",
+    "all_down": false,
+    "checked_at": "—",
+    "up_hosts": [],
+    "down_hosts": []
+  },
+  "r2_down": false,
+  "r2_status": {
+    "name": "Router 2 — Branch",
+    "all_down": false,
+    "checked_at": "—",
+    "up_hosts": [],
+    "down_hosts": []
+  }
+}
+```
 
+### Step 3 — Commit karo
+
+**Commit changes** → Done
+
+---
+
+### Verify karo
+
+Browser mein kholo:
+```
+https://raw.githubusercontent.com/USERNAME/mikrotik-monitor/main/alert_log.json
