@@ -16,111 +16,136 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check All Routers
-        id: check
+      - name: Check Routers and Update Status
         run: |
-          check_host() {
-            local IP=$1 PORT=$2 LABEL=$3
-            START=$(date +%s%3N)
-            HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
-              --connect-timeout 5 --max-time 8 -k \
-              "https://$IP:$PORT/" 2>/dev/null || echo "0")
-            END=$(date +%s%3N)
-            MS=$((END - START))
-            if [ "$HTTP" != "0" ] && [ "$HTTP" != "000" ]; then
-              echo "✅ UP   $LABEL ($IP:$PORT) ${MS}ms HTTP:$HTTP"
-              echo "up"
-            else
-              echo "❌ DOWN $LABEL ($IP:$PORT) ${MS}ms"
-              echo "down"
-            fi
-          }
-
           TIME=$(date '+%d-%b-%Y %H:%M:%S')
           echo "=== MikroTik Monitor === $TIME"
-          echo ""
 
-          # Router 1
-          echo "--- Router 1: Main Office ---"
-          R1_S=$(check_host "115.42.66.83"    "80" "Spotcomm")
-          R1_M=$(check_host "125.209.101.214" "80" "Multinet")
+          check_tcp() {
+            local IP=$1 PORT=$2
+            timeout 6 bash -c "echo >/dev/tcp/$IP/$PORT" 2>/dev/null
+            [ $? -eq 0 ] && echo "up" || echo "down"
+          }
 
-          # Router 2
-          echo "--- Router 2: Branch ---"
-          R2_I=$(check_host "113.203.193.201" "443" "Optome")
-          R2_O=$(check_host "113.203.193.201" "442" "Optome")
+          echo "--- Router 1 ---"
+          R1_S=$(check_tcp "115.42.66.83"    "80")
+          R1_M=$(check_tcp "125.209.101.214" "80")
+          echo "Spotcomm : $R1_S"
+          echo "Multinet : $R1_M"
 
-          # Determine overall status
-          R1_DOWN="false"
-          R2_DOWN="false"
+          echo "--- Router 2 ---"
+          R2_I=$(check_tcp "BRANCH_IP" "80")
+          echo "ISP1 : $R2_I"
 
-          echo "$R1_S" | grep -q "down" && echo "$R1_M" | grep -q "down" && R1_DOWN="true"
-          echo "$R2_I" | grep -q "down" && R2_DOWN="true"
+          [ "$R1_S" = "down" ] && [ "$R1_M" = "down" ] && R1_DOWN="true" || R1_DOWN="false"
+          [ "$R2_I" = "down" ] && R2_DOWN="true" || R2_DOWN="false"
 
-          echo "r1_down=$R1_DOWN"   >> $GITHUB_OUTPUT
-          echo "r2_down=$R2_DOWN"   >> $GITHUB_OUTPUT
-          echo "check_time=$TIME"   >> $GITHUB_OUTPUT
+          echo "Router 1 Down: $R1_DOWN"
+          echo "Router 2 Down: $R2_DOWN"
 
-          # Build JSON for dashboard
-          R1_S_STATUS=$(echo "$R1_S" | grep -q "down" && echo "false" || echo "true")
-          R1_M_STATUS=$(echo "$R1_M" | grep -q "down" && echo "false" || echo "true")
-          R2_I_STATUS=$(echo "$R2_I" | grep -q "down" && echo "false" || echo "true")
+          echo "R1_DOWN=$R1_DOWN" >> $GITHUB_ENV
+          echo "R2_DOWN=$R2_DOWN" >> $GITHUB_ENV
+          echo "CHECK_TIME=$TIME" >> $GITHUB_ENV
 
-          cat > alert_log.json << JSON
-          {
-            "updated_at": "$TIME",
-            "r1_down": $R1_DOWN,
+          python3 << PYEOF
+          import json
+          r1s = "$R1_S"
+          r1m = "$R1_M"
+          r2i = "$R2_I"
+          t   = "$TIME"
+          r1_down = (r1s == "down" and r1m == "down")
+          r2_down = (r2i == "down")
+
+          r1_up   = [] if r1s == "down" else [{"label":"Spotcomm","ip":"115.42.66.83","ms":0}]
+          r1_dn   = [{"label":"Spotcomm","ip":"115.42.66.83","error":"Unreachable"}] if r1s == "down" else []
+          r2_up   = [] if r2i == "down" else [{"label":"ISP1","ip":"BRANCH_IP","ms":0}]
+          r2_dn   = [{"label":"ISP1","ip":"BRANCH_IP","error":"Unreachable"}] if r2i == "down" else []
+
+          data = {
+            "updated_at": t,
+            "r1_down": r1_down,
             "r1_status": {
-              "name": "Router 1 — Main Office",
-              "all_down": $R1_DOWN,
-              "checked_at": "$TIME",
-              "up_hosts":   $([ "$R1_S_STATUS" = "true"  ] && echo '[{"label":"Spotcomm","ip":"115.42.66.83"}]'   || echo '[]'),
-              "down_hosts": $([ "$R1_S_STATUS" = "false" ] && echo '[{"label":"Spotcomm","ip":"115.42.66.83","error":"Unreachable"}]' || echo '[]')
+              "name": "Router 1 - Main Office",
+              "all_down": r1_down,
+              "checked_at": t,
+              "up_hosts": r1_up,
+              "down_hosts": r1_dn
             },
-            "r2_down": $R2_DOWN,
+            "r2_down": r2_down,
             "r2_status": {
-              "name": "Router 2 — Branch",
-              "all_down": $R2_DOWN,
-              "checked_at": "$TIME",
-              "up_hosts":   $([ "$R2_I_STATUS" = "true"  ] && echo '[{"label":"ISP1","ip":"BRANCH_IP"}]' || echo '[]'),
-              "down_hosts": $([ "$R2_I_STATUS" = "false" ] && echo '[{"label":"ISP1","ip":"BRANCH_IP","error":"Unreachable"}]' || echo '[]')
+              "name": "Router 2 - Branch",
+              "all_down": r2_down,
+              "checked_at": t,
+              "up_hosts": r2_up,
+              "down_hosts": r2_dn
             }
           }
-          JSON
+          with open("alert_log.json","w") as f:
+              json.dump(data, f, indent=2, ensure_ascii=True)
+          print("JSON written OK")
+          PYEOF
 
-          echo "JSON written:"
-          cat alert_log.json
-
-      - name: Commit alert_log.json
+      - name: Commit Status
         run: |
           git config user.name  "MikroTik Monitor"
           git config user.email "monitor@github.com"
           git add alert_log.json
-          git diff --staged --quiet || git commit -m "Monitor update $(date '+%H:%M:%S')"
+          git diff --staged --quiet || git commit -m "Monitor ${{ env.CHECK_TIME }}"
           git push
 
-      - name: Send Down Alert Email
-        if: steps.check.outputs.r1_down == 'true' || steps.check.outputs.r2_down == 'true'
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ moba@cloudjunction.cloud }}
-          password: ${{ enegaqmhokvoqdie }}
-          subject: "🔴 MikroTik Alert — Router Down! (${{ steps.check.outputs.check_time }})"
-          to: ${{ adminpk@cloudjunction.cloud }}
-          from: "MikroTik Monitor <${{ secrets.GMAIL_USER }}>"
-          html_body: |
-            <div style="font-family:Arial,sans-serif;max-width:500px;margin:auto">
-              <div style="background:#ef4444;color:white;padding:20px;border-radius:10px 10px 0 0">
-                <h2 style="margin:0">🔴 Router Down Alert</h2>
-                <p style="margin:5px 0 0;opacity:.85">${{ steps.check.outputs.check_time }}</p>
-              </div>
-              <div style="background:#fff;border:1px solid #fee2e2;padding:20px;border-radius:0 0 10px 10px">
-                <p><strong>Router 1:</strong> ${{ steps.check.outputs.r1_down == 'true' && '❌ OFFLINE' || '✅ ONLINE' }}</p>
-                <p><strong>Router 2:</strong> ${{ steps.check.outputs.r2_down == 'true' && '❌ OFFLINE' || '✅ ONLINE' }}</p>
-                <hr>
-                <p>⚡ Check router power and ISP connections immediately.</p>
-                <a href="https://cjinternet.free.nf/" style="background:#3b82f6;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px">Open Dashboard</a>
-              </div>
-            </div>
+      - name: Send Email Alert
+        if: env.R1_DOWN == 'true' || env.R2_DOWN == 'true'
+        run: |
+          python3 << PYEOF
+          import smtplib, ssl
+          from email.mime.multipart import MIMEMultipart
+          from email.mime.text import MIMEText
+          import os
+
+          gmail_user = os.environ['GMAIL_USER']
+          gmail_pass = os.environ['GMAIL_PASS']
+          alert_to   = os.environ['ALERT_EMAIL']
+          r1_down    = os.environ['R1_DOWN'] == 'true'
+          r2_down    = os.environ['R2_DOWN'] == 'true'
+          chk_time   = os.environ['CHECK_TIME']
+
+          subject = "Router Down Alert! - " + chk_time
+          r1_txt  = "OFFLINE" if r1_down else "ONLINE"
+          r2_txt  = "OFFLINE" if r2_down else "ONLINE"
+
+          body_text = f"""MikroTik Router Alert
+          Time: {chk_time}
+          Router 1: {r1_txt}
+          Router 2: {r2_txt}
+          Dashboard: https://cjinternet.free.nf/"""
+
+          body_html = f"""<div style="font-family:Arial,sans-serif;max-width:500px">
+          <div style="background:#ef4444;color:white;padding:20px;border-radius:10px 10px 0 0">
+          <h2>Router Down Alert</h2><p>{chk_time}</p></div>
+          <div style="padding:20px;border:1px solid #fca5a5;border-radius:0 0 10px 10px">
+          <p><b>Router 1:</b> {"❌ OFFLINE" if r1_down else "✅ ONLINE"}</p>
+          <p><b>Router 2:</b> {"❌ OFFLINE" if r2_down else "✅ ONLINE"}</p>
+          <a href="https://cjinternet.free.nf/" style="background:#3b82f6;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block">Open Dashboard</a>
+          </div></div>"""
+
+          msg = MIMEMultipart('alternative')
+          msg['Subject'] = subject
+          msg['From']    = gmail_user
+          msg['To']      = alert_to
+          msg.attach(MIMEText(body_text, 'plain'))
+          msg.attach(MIMEText(body_html,  'html'))
+
+          ctx = ssl.create_default_context()
+          with smtplib.SMTP('smtp.gmail.com', 587) as s:
+              s.starttls(context=ctx)
+              s.login(gmail_user, gmail_pass)
+              s.sendmail(gmail_user, alert_to, msg.as_string())
+          print("Email sent OK")
+          PYEOF
+        env:
+          GMAIL_USER:   ${{ moba@cloudjunction.cloud }}
+          GMAIL_PASS:   ${{ enegaqmhokvoqdie }}
+          ALERT_EMAIL:  ${{ adminpk@cloudjunction.cloud }}
+          R1_DOWN:      ${{ env.R1_DOWN }}
+          R2_DOWN:      ${{ env.R2_DOWN }}
+          CHECK_TIME:   ${{ env.CHECK_TIME }}
