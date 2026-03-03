@@ -47,8 +47,8 @@ jobs:
 
           # Router 2
           echo "--- Router 2: Branch ---"
-          R2_I=$(check_host "113.203.193.201" "80" "Optome")
-          R2_O=$(check_host "113.203.193.201" "80" "Optome")
+          R2_I=$(check_host "113.203.193.201" "443" "Optome")
+          R2_O=$(check_host "113.203.193.201" "442" "Optome")
 
           # Determine overall status
           R1_DOWN="false"
