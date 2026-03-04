@@ -1,18 +1,18 @@
 {
-  "updated_at": "3/4/2026, 2:00:42 PM",
+  "updated_at": "3/4/2026, 2:02:05 PM",
   "test_mode": true,
   "router_1": {
     "status": "UP",
     "details": [
       {
-        "ip": "1.2.3.4",
-        "port": 80,
+        "ip": "103.245.193.137",
+        "port": 21,
         "label": "Fake ISP 1",
-        "ms": 1
+        "ms": 3
       },
       {
-        "ip": "1.2.3.5",
-        "port": 80,
+        "ip": "103.245.193.137",
+        "port": 21,
         "label": "Fake ISP 2",
         "ms": 2
       }
