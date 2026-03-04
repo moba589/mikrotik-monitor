@@ -1,7 +1,41 @@
 {
-  "updated_at": "04/03/2026, 20:18:16",
-  "routers": {
-    "Mikrotik #1 - CFI": "OFFLINE",
-    "Mikrotik #2 - PECHS": "OFFLINE"
+  "updated_at": "04/03/2026, 20:18:54",
+  "r1_down": true,
+  "r1_status": {
+    "name": "Mikrotik #1 - CFI",
+    "all_down": true,
+    "checked_at": "04/03/2026, 20:18:54",
+    "up_hosts": [],
+    "down_hosts": [
+      {
+        "label": "Spotcomm",
+        "ip": "115.42.66.83",
+        "error": "HTTP 403"
+      },
+      {
+        "label": "Multinet",
+        "ip": "125.209.101.214",
+        "error": "HTTP 403"
+      }
+    ]
+  },
+  "r2_down": true,
+  "r2_status": {
+    "name": "Mikrotik #2 - PECHS",
+    "all_down": true,
+    "checked_at": "04/03/2026, 20:18:54",
+    "up_hosts": [],
+    "down_hosts": [
+      {
+        "label": "Optome",
+        "ip": "113.203.193.201",
+        "error": "HTTP 403"
+      },
+      {
+        "label": "Storm Fiber",
+        "ip": "103.245.193.137",
+        "error": "HTTP 403"
+      }
+    ]
   }
 }
