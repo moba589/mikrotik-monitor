@@ -1,41 +1,43 @@
 {
-  "updated_at": "04/03/2026, 21:08:49",
-  "r1_down": false,
+  "updated_at": "04/03/2026, 21:09:36",
   "r1_status": {
     "name": "Mikrotik #1 - CFI",
-    "all_down": false,
-    "checked_at": "04/03/2026, 21:08:49",
-    "up_hosts": [
+    "all_down": true,
+    "checked_at": "04/03/2026, 21:09:36",
+    "up_hosts": [],
+    "down_hosts": [
       {
-        "label": "Spotcomm",
         "ip": "115.42.66.83",
-        "ms": 3
+        "port": 80,
+        "label": "Spotcomm",
+        "error": "Status 403: Negative Response"
       },
       {
-        "label": "Multinet",
         "ip": "125.209.101.214",
-        "ms": 2
+        "port": 80,
+        "label": "Multinet",
+        "error": "Status 403: Negative Response"
       }
-    ],
-    "down_hosts": []
+    ]
   },
-  "r2_down": false,
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
-    "all_down": false,
-    "checked_at": "04/03/2026, 21:08:49",
-    "up_hosts": [
+    "all_down": true,
+    "checked_at": "04/03/2026, 21:09:36",
+    "up_hosts": [],
+    "down_hosts": [
       {
-        "label": "Optome",
         "ip": "113.203.193.201",
-        "ms": 2
+        "port": 80,
+        "label": "Optome",
+        "error": "Status 403: Negative Response"
       },
       {
-        "label": "Storm Fiber",
         "ip": "103.245.193.137",
-        "ms": 2
+        "port": 80,
+        "label": "Storm Fiber",
+        "error": "Status 403: Negative Response"
       }
-    ],
-    "down_hosts": []
+    ]
   }
 }
