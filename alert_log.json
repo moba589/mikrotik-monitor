@@ -1,20 +1,20 @@
 {
-  "updated_at": "3/4/2026, 2:02:05 PM",
+  "updated_at": "3/4/2026, 2:04:48 PM",
   "test_mode": true,
   "router_1": {
-    "status": "UP",
+    "status": "DOWN",
     "details": [
       {
         "ip": "103.245.193.137",
-        "port": 21,
+        "port": 829000,
         "label": "Fake ISP 1",
-        "ms": 3
+        "error": "Invalid URL: http://103.245.193.137:829000/"
       },
       {
         "ip": "103.245.193.137",
-        "port": 21,
+        "port": 823344,
         "label": "Fake ISP 2",
-        "ms": 2
+        "error": "Invalid URL: http://103.245.193.137:823344/"
       }
     ]
   }
