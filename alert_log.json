@@ -1,5 +1,5 @@
 {
-  "updated_at": "3/4/2026, 1:58:02 PM",
+  "updated_at": "3/4/2026, 1:59:24 PM",
   "test_mode": true,
   "router_1": {
     "status": "UP",
@@ -8,7 +8,7 @@
         "ip": "1.2.3.4",
         "port": 80,
         "label": "Fake ISP 1",
-        "ms": 2
+        "ms": 3
       },
       {
         "ip": "1.2.3.5",
