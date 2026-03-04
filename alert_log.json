@@ -1,10 +1,10 @@
 {
-  "updated_at": "04/03/2026, 20:26:55",
+  "updated_at": "04/03/2026, 20:27:06",
   "r1_down": true,
   "r1_status": {
     "name": "Mikrotik #1 - CFI",
     "all_down": true,
-    "checked_at": "04/03/2026, 20:26:55",
+    "checked_at": "04/03/2026, 20:27:06",
     "up_hosts": [],
     "down_hosts": [
       {
@@ -23,7 +23,7 @@
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": true,
-    "checked_at": "04/03/2026, 20:26:55",
+    "checked_at": "04/03/2026, 20:27:06",
     "up_hosts": [],
     "down_hosts": [
       {
