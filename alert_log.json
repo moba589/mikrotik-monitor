@@ -1,20 +1,20 @@
 {
-  "updated_at": "04/03/2026, 21:23:10",
+  "updated_at": "04/03/2026, 21:23:35",
   "r1_status": {
     "name": "Mikrotik #1 - CFI",
     "all_down": true,
-    "checked_at": "04/03/2026, 21:23:10",
+    "checked_at": "04/03/2026, 21:23:35",
     "up_hosts": [],
     "down_hosts": [
       {
         "ip": "115.42.66.83",
-        "port": 80,
+        "port": 8081,
         "label": "Spotcomm",
         "error": "Status 403: Negative Response"
       },
       {
         "ip": "125.209.101.214",
-        "port": 80,
+        "port": 8291,
         "label": "Multinet",
         "error": "Status 403: Negative Response"
       }
@@ -23,7 +23,7 @@
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": true,
-    "checked_at": "04/03/2026, 21:23:10",
+    "checked_at": "04/03/2026, 21:23:35",
     "up_hosts": [],
     "down_hosts": [
       {
