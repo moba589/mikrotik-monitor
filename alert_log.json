@@ -1,14 +1,14 @@
 {
-  "updated_at": "04/03/2026, 21:15:35",
+  "updated_at": "04/03/2026, 21:16:30",
   "r1_status": {
     "name": "Mikrotik #1 - CFI",
     "all_down": true,
-    "checked_at": "04/03/2026, 21:15:35",
+    "checked_at": "04/03/2026, 21:16:30",
     "up_hosts": [],
     "down_hosts": [
       {
         "ip": "115.42.66.83",
-        "port": 22,
+        "port": 8291,
         "label": "Spotcomm SSH",
         "error": "SSH Connection Refused"
       },
@@ -23,7 +23,7 @@
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": true,
-    "checked_at": "04/03/2026, 21:15:35",
+    "checked_at": "04/03/2026, 21:16:30",
     "up_hosts": [],
     "down_hosts": [
       {
