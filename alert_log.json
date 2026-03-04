@@ -1,15 +1,15 @@
 {
-  "updated_at": "04/03/2026, 13:45:42",
+  "updated_at": "04/03/2026, 13:50:42",
   "r1_down": false,
   "r1_status": {
     "name": "Router 1 - Main Office",
     "all_down": false,
-    "checked_at": "04/03/2026, 13:45:42",
+    "checked_at": "04/03/2026, 13:50:42",
     "up_hosts": [
       {
         "label": "Spotcomm",
         "ip": "115.42.66.83",
-        "ms": 2
+        "ms": 1
       },
       {
         "label": "Multinet",
@@ -23,17 +23,17 @@
   "r2_status": {
     "name": "Router 2 - Branch",
     "all_down": false,
-    "checked_at": "04/03/2026, 13:45:42",
+    "checked_at": "04/03/2026, 13:50:42",
     "up_hosts": [
       {
-        "label": "ISP1",
-        "ip": "113.203.193.201",
-        "ms": 2
+        "label": "storm",
+        "ip": "1.2.3.4",
+        "ms": 1
       },
       {
         "label": "ISP2",
-        "ip": "103.245.193.137",
-        "ms": 2
+        "ip": "1.2.3.6",
+        "ms": 1
       }
     ],
     "down_hosts": []
