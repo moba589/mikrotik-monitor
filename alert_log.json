@@ -1,7 +1,7 @@
 {
-  "last_check": "3/4/2026, 2:35:42 PM",
+  "last_check": "3/4/2026, 2:37:51 PM",
   "routers": {
     "Router 1 - Main Office": "UP",
-    "Router 2 - Branch (TEST)": "DOWN"
+    "Router 2 - Branch (TEST)": "UP"
   }
 }
