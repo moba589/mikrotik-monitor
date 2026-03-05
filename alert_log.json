@@ -1,10 +1,10 @@
 {
-  "updated_at": "05/03/2026, 11:48:36",
+  "updated_at": "05/03/2026, 11:48:38",
   "r1_down": true,
   "r1_status": {
     "name": "Mikrotik #1 - CFI",
     "all_down": true,
-    "checked_at": "05/03/2026, 11:48:36",
+    "checked_at": "05/03/2026, 11:48:38",
     "up_hosts": [],
     "down_hosts": [
       {
@@ -15,7 +15,7 @@
       {
         "label": "Multinet",
         "ip": "125.209.101.214",
-        "error": "Suspicious response (3ms) — possible CF fake"
+        "error": "Suspicious response (2ms) — possible CF fake"
       }
     ]
   },
@@ -23,7 +23,7 @@
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": true,
-    "checked_at": "05/03/2026, 11:48:36",
+    "checked_at": "05/03/2026, 11:48:38",
     "up_hosts": [],
     "down_hosts": [
       {
