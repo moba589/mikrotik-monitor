@@ -36,7 +36,7 @@ jobs:
       - name: Save state
         run: |
           git config user.name  "Monitor Bot"
-          git config user.email "monitor@cloudjunction.cloud"
+          git config user.email "onboarding@resend.dev"
           git pull --rebase origin main || true
           git add monitor_state.json alert_log.json || true
           git diff --staged --quiet || git commit -m "Monitor state $(date -u +%H:%M:%S)"
