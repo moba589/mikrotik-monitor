@@ -29,7 +29,7 @@ ROUTERS = [
         "id": 2,
         "name": "Mikrotik #2 - PECHS",
         "hosts": [
-            {"ip": "113.203.193.201", "port": 8081, "label": "Optome"},
+            {"ip": "113.203.193.201", "port": 80812, "label": "Optome"},
             {"ip": "103.245.193.137", "port": 8081, "label": "Storm Fiber"},
         ]
     }
