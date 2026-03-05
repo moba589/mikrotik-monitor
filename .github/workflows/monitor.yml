@@ -28,8 +28,8 @@ jobs:
           GITHUB_TOKEN:   ${{ secrets.MONITOR_GITHUB_TOKEN }}
           GITHUB_USER:    moba589
           GITHUB_REPO:    mikrotik-monitor
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          ALERT_FROM:     ${{ secrets.ALERT_FROM }}
+          GMAIL_USER:     ${{ secrets.GMAIL_USER }}
+          GMAIL_PASS:     ${{ secrets.GMAIL_PASS }}
           ALERT_TO:       ${{ secrets.ALERT_TO }}
         run: python monitor.py
 
