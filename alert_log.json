@@ -1,20 +1,21 @@
 {
-  "updated_at": "05/03/2026, 11:50:38",
-  "r1_down": true,
+  "updated_at": "05/03/2026, 11:50:40",
+  "r1_down": false,
   "r1_status": {
     "name": "Mikrotik #1 - CFI",
-    "all_down": true,
-    "checked_at": "05/03/2026, 11:50:38",
-    "up_hosts": [],
+    "all_down": false,
+    "checked_at": "05/03/2026, 11:50:40",
+    "up_hosts": [
+      {
+        "label": "Multinet",
+        "ip": "125.209.101.214",
+        "ms": 7
+      }
+    ],
     "down_hosts": [
       {
         "label": "Spotcomm",
         "ip": "115.42.66.83",
-        "error": "Suspicious response (2ms) — possible CF fake"
-      },
-      {
-        "label": "Multinet",
-        "ip": "125.209.101.214",
         "error": "Suspicious response (3ms) — possible CF fake"
       }
     ]
@@ -23,7 +24,7 @@
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": true,
-    "checked_at": "05/03/2026, 11:50:38",
+    "checked_at": "05/03/2026, 11:50:40",
     "up_hosts": [],
     "down_hosts": [
       {
