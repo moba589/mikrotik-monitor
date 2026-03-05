@@ -1,17 +1,18 @@
 {
-  "updated_at": "05/03/2026, 11:50:11",
-  "r1_down": true,
+  "updated_at": "05/03/2026, 11:50:14",
+  "r1_down": false,
   "r1_status": {
     "name": "Mikrotik #1 - CFI",
-    "all_down": true,
-    "checked_at": "05/03/2026, 11:50:11",
-    "up_hosts": [],
-    "down_hosts": [
+    "all_down": false,
+    "checked_at": "05/03/2026, 11:50:14",
+    "up_hosts": [
       {
         "label": "Spotcomm",
         "ip": "115.42.66.83",
-        "error": "Suspicious response (3ms) — possible CF fake"
-      },
+        "ms": 5
+      }
+    ],
+    "down_hosts": [
       {
         "label": "Multinet",
         "ip": "125.209.101.214",
@@ -23,18 +24,18 @@
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": true,
-    "checked_at": "05/03/2026, 11:50:11",
+    "checked_at": "05/03/2026, 11:50:14",
     "up_hosts": [],
     "down_hosts": [
       {
         "label": "Optome",
         "ip": "113.203.193.201",
-        "error": "Suspicious response (2ms) — possible CF fake"
+        "error": "Suspicious response (3ms) — possible CF fake"
       },
       {
         "label": "Storm Fiber",
         "ip": "103.245.193.137",
-        "error": "Suspicious response (4ms) — possible CF fake"
+        "error": "Suspicious response (2ms) — possible CF fake"
       }
     ]
   }
