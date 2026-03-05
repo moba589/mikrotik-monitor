@@ -1,0 +1,42 @@
+name: MikroTik Monitor
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # Har 5 minute
+  workflow_dispatch:          # Manual trigger bhi
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Restore state
+        run: |
+          if [ -f monitor_state.json ]; then
+            echo "State file found"
+          else
+            echo "{}" > monitor_state.json
+          fi
+
+      - name: Run monitor
+        env:
+          GITHUB_TOKEN:   ${{ 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 }}
+          GITHUB_USER:    moba589
+          GITHUB_REPO:    mikrotik-monitor
+          RESEND_API_KEY: ${{ re_dUSi2xqw_5q2s6NjUAeFLSUW1sAE5Jd6J }}
+          ALERT_FROM:     ${{ onboarding@resend.dev }}
+          ALERT_TO:       ${{ moba@cloudjunction.cloud }}
+        run: python monitor.py
+
+      - name: Save state
+        run: |
+          git config user.name  "Monitor Bot"
+          git config user.email "monitor@cloudjunction.cloud"
+          git add monitor_state.json alert_log.json || true
+          git diff --staged --quiet || git commit -m "Monitor state $(date -u +%H:%M:%S)"
+          git push
