@@ -29,8 +29,8 @@ ROUTERS = [
         "id": 2,
         "name": "Mikrotik #2 - PECHS",
         "hosts": [
-            {"ip": "113.203.193.201", "port": 80812, "label": "Optome"},
-            {"ip": "103.245.193.137", "port": 8081, "label": "Storm Fiber"},
+            {"ip": "113.203.193.201", "port": 80, "label": "Optome"},
+            {"ip": "103.245.193.137", "port": 80, "label": "Storm Fiber"},
         ]
     }
 ]
@@ -58,38 +58,33 @@ def check_host(ip, port, timeout=5):
         ms = int((time.time() - start) * 1000)
         return {"online": False, "ms": ms, "error": str(e)}
 
-# ── Send Email via Resend ─────────────────────────────────────
+# ── Send Email via Gmail SMTP ────────────────────────────────
 def send_email(subject, html, text):
-    api_key  = os.environ.get("RESEND_API_KEY", "")
-    from_addr = os.environ.get("ALERT_FROM", "onboarding@resend.dev")
-    to_addr   = os.environ.get("ALERT_TO",   "adminpk@cloudjunction.cloud")
+    gmail_user = os.environ.get("GMAIL_USER", "moba@cloudjunction.cloud")
+    gmail_pass = os.environ.get("GMAIL_PASS", "sqru cqtu lbqm kkkd")
+    to_addr    = os.environ.get("ALERT_TO",   "adminpk@cloudjunction.cloud")
 
-    if not api_key:
-        print("  [SKIP] No RESEND_API_KEY set")
+    if not gmail_user or not gmail_pass:
+        print("  [SKIP] No GMAIL_USER or GMAIL_PASS set")
         return False
 
-    import json as jsonlib
-    payload = jsonlib.dumps({
-        "from": from_addr,
-        "to":   [to_addr],
-        "subject": subject,
-        "html": html,
-        "text": text,
-    }).encode("utf-8")
-
-    req = urllib.request.Request(
-        "https://api.resend.com/emails",
-        data=payload,
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type":  "application/json",
-        },
-        method="POST"
-    )
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            print(f"  [EMAIL] Sent OK ({resp.status})")
-            return True
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"]    = gmail_user
+        msg["To"]      = to_addr
+
+        msg.attach(MIMEText(text, "plain"))
+        msg.attach(MIMEText(html, "html"))
+
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.ehlo()
+            server.starttls()
+            server.login(gmail_user, gmail_pass)
+            server.sendmail(gmail_user, to_addr, msg.as_string())
+
+        print(f"  [EMAIL] Sent OK via Gmail → {to_addr}")
+        return True
     except Exception as e:
         print(f"  [EMAIL] Failed: {e}")
         return False
