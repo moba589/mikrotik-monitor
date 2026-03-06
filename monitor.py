@@ -252,7 +252,7 @@ def save_state(state):
 
 # ── Main ──────────────────────────────────────────────────────
 def main():
-    ts    = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+    ts    = datetime.now(tz=__import__("zoneinfo").ZoneInfo("Asia/Karachi")).strftime("%d/%m/%Y, %H:%M:%S")
     now   = time.time()
     state = load_state()
     result = {"updated_at": ts}
