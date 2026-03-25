@@ -21,8 +21,8 @@ ROUTERS = [
         "id": 1,
         "name": "Mikrotik #1 - CFI",
         "hosts": [
-            {"ip": "115.42.66.83",    "port": 8081, "label": "Spotcomm"},
-            {"ip": "125.209.101.214", "port": 8081, "label": "Multinet"},
+            {"ip": "115.42.66.83",    "port": 80981, "label": "Spotcomm"},
+            {"ip": "125.209.101.214", "port": 80981, "label": "Multinet"},
         ]
     },
     {
