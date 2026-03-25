@@ -62,7 +62,7 @@ def check_host(ip, port, timeout=5):
 def send_email(subject, html, text):
     gmail_user = os.environ.get("GMAIL_USER", "moba@cloudjunction.cloud")
     gmail_pass = os.environ.get("GMAIL_PASS", "sqru cqtu lbqm kkkd")
-    to_addr    = os.environ.get("ALERT_TO",   "adminpk@cloudjunction.cloud")
+    to_addr    = os.environ.get("ALERT_TO",   "it-alerts@cloudjunction.cloud")
 
     if not gmail_user or not gmail_pass:
         print("  [SKIP] No GMAIL_USER or GMAIL_PASS set")
