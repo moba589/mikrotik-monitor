@@ -1,39 +1,39 @@
 {
-  "updated_at": "25/03/2026, 12:25:10",
-  "r1_down": false,
+  "updated_at": "25/03/2026, 12:27:53",
+  "r1_down": true,
   "r1_status": {
     "name": "Mikrotik #1 - CFI",
-    "all_down": false,
-    "checked_at": "25/03/2026, 12:25:10",
-    "up_hosts": [
+    "all_down": true,
+    "checked_at": "25/03/2026, 12:27:53",
+    "up_hosts": [],
+    "down_hosts": [
       {
         "label": "Spotcomm",
         "ip": "115.42.66.83",
-        "ms": 243
+        "error": "connect_ex(): port must be 0-65535."
       },
       {
         "label": "Multinet",
         "ip": "125.209.101.214",
-        "ms": 284
+        "error": "connect_ex(): port must be 0-65535."
       }
-    ],
-    "down_hosts": []
+    ]
   },
   "r2_down": false,
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": false,
-    "checked_at": "25/03/2026, 12:25:10",
+    "checked_at": "25/03/2026, 12:27:53",
     "up_hosts": [
       {
         "label": "Optome",
         "ip": "113.203.193.201",
-        "ms": 242
+        "ms": 1233
       },
       {
         "label": "Storm Fiber",
         "ip": "103.245.193.137",
-        "ms": 229
+        "ms": 194
       }
     ],
     "down_hosts": []
