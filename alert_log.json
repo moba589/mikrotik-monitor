@@ -1,20 +1,20 @@
 {
-  "updated_at": "06/04/2026, 15:15:10",
+  "updated_at": "06/04/2026, 15:19:39",
   "r1_down": false,
   "r1_status": {
     "name": "Mikrotik #1 - CFI",
     "all_down": false,
-    "checked_at": "06/04/2026, 15:15:10",
+    "checked_at": "06/04/2026, 15:19:39",
     "up_hosts": [
       {
         "label": "Spotcomm",
         "ip": "115.42.66.83",
-        "ms": 197
+        "ms": 196
       },
       {
         "label": "Multinet",
         "ip": "125.209.101.214",
-        "ms": 194
+        "ms": 193
       }
     ],
     "down_hosts": []
@@ -23,17 +23,17 @@
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": false,
-    "checked_at": "06/04/2026, 15:15:10",
+    "checked_at": "06/04/2026, 15:19:39",
     "up_hosts": [
       {
         "label": "Optome",
         "ip": "113.203.193.201",
-        "ms": 189
+        "ms": 4288
       },
       {
         "label": "Storm Fiber",
         "ip": "103.245.193.137",
-        "ms": 194
+        "ms": 196
       }
     ],
     "down_hosts": []
