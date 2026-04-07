@@ -1,15 +1,15 @@
 {
-  "updated_at": "07/04/2026, 23:10:16",
+  "updated_at": "07/04/2026, 23:11:03",
   "r1_down": false,
   "r1_status": {
     "name": "Mikrotik #1 - CFI",
     "all_down": false,
-    "checked_at": "07/04/2026, 23:10:16",
+    "checked_at": "07/04/2026, 23:11:03",
     "up_hosts": [
       {
         "label": "Multinet",
         "ip": "125.209.101.214",
-        "ms": 269
+        "ms": 194
       }
     ],
     "down_hosts": [
@@ -24,19 +24,20 @@
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": false,
-    "checked_at": "07/04/2026, 23:10:16",
+    "checked_at": "07/04/2026, 23:11:03",
     "up_hosts": [
-      {
-        "label": "Optome",
-        "ip": "113.203.193.201",
-        "ms": 249
-      },
       {
         "label": "Storm Fiber",
         "ip": "103.245.193.137",
-        "ms": 243
+        "ms": 192
       }
     ],
-    "down_hosts": []
+    "down_hosts": [
+      {
+        "label": "Optome",
+        "ip": "113.203.193.201",
+        "error": "Port closed (code 11)"
+      }
+    ]
   }
 }
