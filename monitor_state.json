@@ -1,8 +1,8 @@
 {
   "r1_down": false,
-  "r2_last_alert": 1775535311.6992335,
-  "r2_down_since": null,
-  "r2_down": false,
+  "r2_last_alert": 1776898211.4803224,
+  "r2_down_since": 1776898211.4803224,
+  "r2_down": true,
   "r1_last_alert": 1775984710.908576,
   "r1_down_since": null
 }
