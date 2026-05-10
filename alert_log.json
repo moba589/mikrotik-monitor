@@ -9,12 +9,12 @@
       {
         "label": "Spotcomm",
         "ip": "115.42.66.83",
-        "ms": 247
+        "ms": 243
       },
       {
         "label": "Multinet",
         "ip": "125.209.101.214",
-        "ms": 242
+        "ms": 268
       }
     ],
     "down_hosts": []
@@ -28,7 +28,7 @@
       {
         "label": "Storm Fiber",
         "ip": "103.245.193.137",
-        "ms": 236
+        "ms": 252
       }
     ],
     "down_hosts": [
