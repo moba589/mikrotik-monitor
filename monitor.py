@@ -16,15 +16,15 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # ── Configuration ─────────────────────────────────────────────
-#ROUTERS = [
-#    {
- #       "id": 1,
-  #      "name": "Mikrotik #1 - CFI",
-   #     "hosts": [
-    #        {"ip": "115.42.66.83",    "port": 8081, "label": "Spotcomm
-     #       {"ip": "125.209.101.214", "port": 8081, "label": "Multinet"},
-      #  ]
-   # },
+ROUTERS = [
+    # {
+    #     "id": 1,
+    #     "name": "Mikrotik #1 - CFI",
+    #     "hosts": [
+    #         # {"ip": "115.42.66.83",    "port": 8081, "label": "Spotcomm"},
+    #         {"ip": "125.209.101.214", "port": 8081, "label": "Multinet"},
+    #     ]
+    # },
     {
         "id": 2,
         "name": "Mikrotik #2 - PECHS",
