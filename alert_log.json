@@ -1,15 +1,15 @@
 {
-  "updated_at": "13/07/2026, 19:16:16",
+  "updated_at": "13/07/2026, 19:30:34",
   "r2_down": false,
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": false,
-    "checked_at": "13/07/2026, 19:16:16",
+    "checked_at": "13/07/2026, 19:30:34",
     "up_hosts": [
       {
         "label": "Storm Fiber",
         "ip": "103.245.193.137",
-        "ms": 214
+        "ms": 201
       }
     ],
     "down_hosts": [
