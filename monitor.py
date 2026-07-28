@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 MikroTik Monitor — GitHub Actions
-Direct TCP connect se ISP check karta hai
+Direct TCP connect with Relaxed Timeouts & Retries
 """
 
 import socket
@@ -38,25 +38,54 @@ ROUTERS = [
 DASHBOARD_URL = "https://cjinternet.free.nf/"
 COOLDOWN_MIN  = 30
 
-# ── TCP Check — direct socket, no HTTP proxy ──────────────────
-def check_host(ip, port, timeout=5):
-    start = time.time()
-    try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(timeout)
-        result = sock.connect_ex((ip, port))
-        ms = int((time.time() - start) * 1000)
-        sock.close()
-        if result == 0:
-            return {"online": True, "ms": ms, "error": ""}
-        else:
-            return {"online": False, "ms": ms, "error": f"Port closed (code {result})"}
-    except socket.timeout:
-        ms = int((time.time() - start) * 1000)
-        return {"online": False, "ms": ms, "error": "Timeout (5s)"}
-    except Exception as e:
-        ms = int((time.time() - start) * 1000)
-        return {"online": False, "ms": ms, "error": str(e)}
+# Relaxed Environment & High-Tolerance Timeouts
+MAX_RETRIES     = 3     # Kitni dafa fail hone par offline declare kare
+RETRY_DELAY     = 5     # Har retry ke darmian kitne seconds ka gap ho (Barha diya gaya hai)
+CONNECT_TIMEOUT = 10    # TCP Socket Timeout in Seconds (Barha diya gaya hai)
+GITHUB_TIMEOUT  = 15    # GitHub API Request Timeout
+
+
+# ── TCP Check with Retries & Extended Timeout ─────────────────
+def check_host_with_retry(ip, port, timeout=CONNECT_TIMEOUT, max_retries=MAX_RETRIES, retry_delay=RETRY_DELAY):
+    """
+    Direct socket TCP check.
+    Uses generous timeout (10s) and retries up to 3 times before declaring offline.
+    """
+    last_error = ""
+    last_ms = 0
+
+    for attempt in range(1, max_retries + 1):
+        start = time.time()
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(timeout)
+            result = sock.connect_ex((ip, port))
+            ms = int((time.time() - start) * 1000)
+            sock.close()
+
+            if result == 0:
+                if attempt > 1:
+                    print(f"      [RECOVERED] Host responded on attempt {attempt}/{max_retries} ({ms}ms)")
+                return {"online": True, "ms": ms, "error": "", "attempts": attempt}
+            else:
+                last_error = f"Port closed (code {result})"
+                last_ms = ms
+
+        except socket.timeout:
+            last_ms = int((time.time() - start) * 1000)
+            last_error = f"Timeout ({timeout}s)"
+        except Exception as e:
+            last_ms = int((time.time() - start) * 1000)
+            last_error = str(e)
+
+        # Retry logic
+        if attempt < max_retries:
+            print(f"      [WARN] Attempt {attempt}/{max_retries} failed ({last_error}). Retrying in {retry_delay}s...")
+            time.sleep(retry_delay)
+
+    # Aggregated Failure after all retries
+    return {"online": False, "ms": last_ms, "error": f"{last_error} (Failed after {max_retries} attempts)", "attempts": max_retries}
+
 
 # ── Send Email via Gmail SMTP ────────────────────────────────
 def send_email(subject, html, text):
@@ -77,7 +106,7 @@ def send_email(subject, html, text):
         msg.attach(MIMEText(text, "plain"))
         msg.attach(MIMEText(html, "html"))
 
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=15) as server:
             server.ehlo()
             server.starttls()
             server.login(gmail_user, gmail_pass)
@@ -88,6 +117,7 @@ def send_email(subject, html, text):
     except Exception as e:
         print(f"  [EMAIL] Failed: {e}")
         return False
+
 
 # ── Build Email ───────────────────────────────────────────────
 def build_email(etype, name, down_hosts, up_hosts, ts):
@@ -193,6 +223,7 @@ def build_email(etype, name, down_hosts, up_hosts, ts):
     )
     return html, text
 
+
 # ── Push to GitHub ────────────────────────────────────────────
 def push_github(data):
     import base64
@@ -211,13 +242,12 @@ def push_github(data):
         "User-Agent":    "MikroTik-Monitor-GA",
     }
 
-    # Get SHA
     sha = None
     try:
         req = urllib.request.Request(api_url, headers=headers)
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with urllib.request.urlopen(req, timeout=GITHUB_TIMEOUT) as resp:
             sha = json.loads(resp.read())["sha"]
-    except:
+    except Exception:
         pass
 
     content = base64.b64encode(json.dumps(data, indent=2).encode()).decode()
@@ -229,12 +259,13 @@ def push_github(data):
 
     req = urllib.request.Request(api_url, data=payload, headers=headers, method="PUT")
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with urllib.request.urlopen(req, timeout=GITHUB_TIMEOUT) as resp:
             print(f"  [GITHUB] Updated OK ({resp.status})")
             return True
     except Exception as e:
         print(f"  [GITHUB] Failed: {e}")
         return False
+
 
 # ── Load / Save State ─────────────────────────────────────────
 STATE_FILE = "monitor_state.json"
@@ -243,14 +274,15 @@ def load_state():
     try:
         with open(STATE_FILE) as f:
             return json.load(f)
-    except:
+    except Exception:
         return {}
 
 def save_state(state):
     with open(STATE_FILE, "w") as f:
         json.dump(state, f, indent=2)
 
-# ── Main ──────────────────────────────────────────────────────
+
+# ── Main Execution ───────────────────────────────────────────
 def main():
     ts    = datetime.now(tz=__import__("zoneinfo").ZoneInfo("Asia/Karachi")).strftime("%d/%m/%Y, %H:%M:%S")
     now   = time.time()
@@ -266,13 +298,18 @@ def main():
         down_hosts = []
 
         for host in router["hosts"]:
-            r = check_host(host["ip"], host["port"])
+            print(f"  Checking {host['label']} ({host['ip']}:{host['port']})...")
+            
+            r = check_host_with_retry(host["ip"], host["port"])
+            
             if r["online"]:
-                print(f"  [UP  ] {host['label']} ({host['ip']}:{host['port']}) {r['ms']}ms")
+                print(f"    [UP  ] {host['label']} ({host['ip']}:{host['port']}) {r['ms']}ms")
                 up_hosts.append({**host, "ms": r["ms"]})
             else:
-                print(f"  [DOWN] {host['label']} ({host['ip']}:{host['port']}) — {r['error']}")
+                print(f"    [DOWN] {host['label']} ({host['ip']}:{host['port']}) — {r['error']}")
                 down_hosts.append({**host, "error": r["error"]})
+
+            time.sleep(1)
 
         all_down    = len(up_hosts) == 0
         was_down    = state.get(f"r{rid}_down", False)
@@ -280,7 +317,7 @@ def main():
         cooldown_ok = (now - last_alert) >= (COOLDOWN_MIN * 60)
 
         if all_down:
-            print("  *** ALL DOWN ***")
+            print("  *** ALL CONNECTIONS CONFIRMED DOWN ***")
             if not was_down or cooldown_ok:
                 html, text = build_email("down", router["name"], down_hosts, up_hosts, ts)
                 send_email(f"ROUTER DOWN: {router['name']}", html, text)
@@ -308,6 +345,7 @@ def main():
     save_state(state)
     push_github(result)
     print("\n=== Done ===")
+
 
 if __name__ == "__main__":
     main()
