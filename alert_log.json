@@ -1,23 +1,22 @@
 {
-  "updated_at": "08/10/2026, 00:30:18",
+  "updated_at": "08/10/2026, 01:00:26",
   "r2_down": false,
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": false,
-    "checked_at": "08/10/2026, 00:30:18",
+    "checked_at": "08/10/2026, 01:00:26",
     "up_hosts": [
-      {
-        "label": "Storm Fiber",
-        "ip": "103.245.193.137",
-        "ms": 183
-      }
-    ],
-    "down_hosts": [
       {
         "label": "Optome",
         "ip": "113.203.193.201",
-        "error": "Port closed (code 11) (Failed after 3 attempts)"
+        "ms": 180
+      },
+      {
+        "label": "Storm Fiber",
+        "ip": "103.245.193.137",
+        "ms": 182
       }
-    ]
+    ],
+    "down_hosts": []
   }
 }
