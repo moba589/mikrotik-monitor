@@ -41,5 +41,4 @@ jobs:
           git pull origin main || true
           git stash pop || true
           git add monitor_state.json alert_log.json || true
-          git diff --staged --quiet || git commit -m "Monitor state $(date -u +%H:%M:%S)"
           git push --force-with-lease
