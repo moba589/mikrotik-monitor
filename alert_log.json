@@ -1,10 +1,10 @@
 {
-  "updated_at": "25/11/2026, 09:25:48",
+  "updated_at": "25/11/2026, 09:30:21",
   "r2_down": true,
   "r2_status": {
     "name": "Mikrotik #2 - PECHS",
     "all_down": true,
-    "checked_at": "25/11/2026, 09:25:48",
+    "checked_at": "25/11/2026, 09:30:21",
     "up_hosts": [],
     "down_hosts": [
       {
